@@ -2,8 +2,9 @@
   "compilerOptions": {
     "outDir": "./dist",
     "module": "CommonJS",
-    "target": "ES2023",
+    "target": "esnext",
     "esModuleInterop": true,
-    "allowJs": true
+    "allowJs": true,
+    "strict": true
   }
 }

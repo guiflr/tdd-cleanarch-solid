@@ -1,0 +1,6 @@
+./dist
+.eslintrc.json
+tsconfig.json
+package-lock.json
+.prettierrc
+package.json
