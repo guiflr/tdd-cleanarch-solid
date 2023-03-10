@@ -7,16 +7,16 @@
     "singleAttributePerLine": false,
     "bracketSameLine": false,
     "jsxBracketSameLine": false,
-    "jsxSingleQuote": false,
+    "jsxSingleQuote": true,
     "printWidth": 80,
     "proseWrap": "preserve",
-    "quoteProps": "as-needed",
+    "quoteProps": "preserve",
     "requirePragma": false,
     "semi": false,
-    "singleQuote": false,
-    "tabWidth": 2,
-    "trailingComma": "es5",
+    "singleQuote": true,
+    "tabWidth": 2,    
     "useTabs": false,
     "vueIndentScriptAndStyle": false,    
-    "parser": "typescript"
+    "parser": "typescript",
+    "trailingComma" : "none"
   }

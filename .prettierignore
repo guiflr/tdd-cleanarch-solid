@@ -2,5 +2,7 @@
 .eslintrc.json
 tsconfig.json
 package-lock.json
-.prettierrc
+.prettierrc.json
 package.json
+.lintstagedrc.json
+.huskyrc.json
