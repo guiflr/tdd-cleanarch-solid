@@ -2,7 +2,8 @@
   "extends": ["standard-with-typescript"],
   "rules": {
     "space-before-function-paren": "off",
-    "@typescript-eslint/space-before-function-paren": "warn"
+    "@typescript-eslint/space-before-function-paren": "warn",
+    "@typescript-eslint/strict-boolean-expressions": "off"
     }
   ,
   "parserOptions": {
