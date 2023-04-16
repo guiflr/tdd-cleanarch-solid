@@ -6,7 +6,7 @@ import {
   type HttpResponse
 } from './signup-protocols'
 import { InvalidParamError, MissingParamError } from '../../errors'
-import { badResquest, serverError } from '../../helpers/http-helper'
+import { badResquest, serverError, ok } from '../../helpers/http-helper'
 
 export class SignUpController implements Controller {
   constructor(
@@ -44,7 +44,7 @@ export class SignUpController implements Controller {
         password
       })
 
-      return { statusCode: 200, body: account }
+      return ok(account)
     } catch (error) {
       return serverError()
     }
