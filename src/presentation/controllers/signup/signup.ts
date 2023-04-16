@@ -1,12 +1,12 @@
-import { type AddAccount } from '../../domain/usecases/add-account'
-import { InvalidParamError, MissingParamError } from '../errors'
-import { badResquest, serverError } from '../helpers/http-helper'
 import {
+  type AddAccount,
   type Controller,
   type EmailValidator,
   type HttpRequest,
   type HttpResponse
-} from '../protocols'
+} from './signup-protocols'
+import { InvalidParamError, MissingParamError } from '../../errors'
+import { badResquest, serverError } from '../../helpers/http-helper'
 
 export class SignUpController implements Controller {
   constructor(
@@ -38,13 +38,13 @@ export class SignUpController implements Controller {
         return badResquest(new InvalidParamError('email'))
       }
 
-      this.addAccount.add({
+      const account = this.addAccount.add({
         name,
         email,
         password
       })
 
-      return { statusCode: 200, body: '' }
+      return { statusCode: 200, body: account }
     } catch (error) {
       return serverError()
     }
