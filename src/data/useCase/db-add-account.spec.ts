@@ -111,4 +111,23 @@ describe('DBAddUserAccount', () => {
 
     await expect(promise).rejects.toThrow()
   })
+
+  test('Should create Account', async () => {
+    const { sut } = makeSut()
+
+    const accountData = {
+      name: 'name',
+      email: 'email@email.com',
+      password: 'password'
+    }
+
+    const account = await sut.add(accountData)
+
+    expect(account).toEqual({
+      id: 'id',
+      name: 'name',
+      email: 'email@email.com',
+      password: 'hashed_password'
+    })
+  })
 })
