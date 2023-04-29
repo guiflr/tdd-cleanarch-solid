@@ -5,6 +5,7 @@
     "target": "esnext",
     "esModuleInterop": true,
     "allowJs": true,
-    "strict": true
+    "strict": true,
+    "noImplicitAny": false,
   }
 }
