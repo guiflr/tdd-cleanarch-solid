@@ -11,7 +11,6 @@ export class AccountMongoRepository implements AddAccountRepository {
 
     const { email, name, password } = accountData
 
-    console.log(data.insertedId.toString())
     return { email, name, password, id: data.insertedId.toString() }
   }
 }
