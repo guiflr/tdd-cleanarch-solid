@@ -1,11 +1,15 @@
 import express from 'express'
 import middlewares from '../config/middlewares'
-import signupRoutes from '../routes/signup-routes'
+import { routes } from '../routes'
 
 const app = express()
 
 middlewares(app)
 
-signupRoutes(app)
+const mainRouter = express.Router()
+
+app.use('/api', mainRouter)
+
+routes(mainRouter)
 
 export default app
