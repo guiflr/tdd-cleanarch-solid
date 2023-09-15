@@ -1,32 +1,40 @@
-import { MongoMemoryServer } from 'mongodb-memory-server'
 import { MongoClient, type Collection } from 'mongodb'
+import { getUri } from './get-uri'
+import type { MongoMemoryServer } from 'mongodb-memory-server'
 
-interface Mongo {
-  mongoClient: MongoClient
-  mockServer: MongoMemoryServer
+export const mongoHelper: MongoHelper = {
+  client: null as any as MongoClient,
+  memoryServer: null as any as MongoMemoryServer,
+  async connect() {
+    const { uri, mongoMemory } = await getUri()
+    this.memoryServer = mongoMemory
+    const mongoClient = await MongoClient.connect(uri)
+    this.client = mongoClient
+    return mongoClient
+  },
+  async disconnect() {
+    await this.client.close()
+    this.client = null as any as MongoClient
+  },
+  async getCollection(collection) {
+    if (!this.client) {
+      await this.connect()
+    }
+
+    return this.client.db().collection(collection)
+  },
+  async disconnectMongoMemory() {
+    if (this.memoryServer) {
+      await this.memoryServer.stop()
+    }
+  }
 }
 
-class MongoHelper {
-  async connect(): Promise<Mongo> {
-    const mongoServer = await MongoMemoryServer.create()
-    const mongoUri = mongoServer.getUri()
-    const mongoClient = await MongoClient.connect(mongoUri)
-    return { mongoClient, mockServer: mongoServer }
-  }
-
-  async disconnect(): Promise<void> {
-    const { mockServer, mongoClient } = await this.connect()
-
-    await mongoClient.close()
-
-    await mockServer.stop()
-  }
-
-  async getCollection(name: string): Promise<Collection> {
-    const { mongoClient } = await this.connect()
-
-    return mongoClient.db().collection(name)
-  }
+interface MongoHelper {
+  client: MongoClient
+  connect: () => Promise<MongoClient>
+  disconnect: () => Promise<void>
+  getCollection: (collection: string) => Promise<Collection>
+  disconnectMongoMemory: () => Promise<void>
+  memoryServer: MongoMemoryServer | null
 }
-
-export default new MongoHelper()

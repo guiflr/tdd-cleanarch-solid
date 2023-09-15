@@ -1,14 +1,19 @@
 import supertest from 'supertest'
 import app from '../config/app'
-import MongoHelper from '../../infra/db/mongodb/helpers/mongo-helper'
+import { mongoHelper } from '../../infra/db/mongodb/helpers/mongo-helper'
 
 describe('Cors Middlware', () => {
+  beforeAll(async () => {
+    await mongoHelper.connect()
+  })
+
   afterAll(async () => {
-    await MongoHelper.disconnect()
+    await mongoHelper.disconnect()
+    await mongoHelper.disconnectMongoMemory()
   })
 
   beforeEach(async () => {
-    const collection = await MongoHelper.getCollection('accounts')
+    const collection = await mongoHelper.getCollection('accounts')
 
     await collection.deleteMany({})
   })
