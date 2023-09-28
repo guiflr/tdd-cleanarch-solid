@@ -3,9 +3,8 @@ import { badResquest } from '../../helpers/http-helper'
 import { LoginController } from './login'
 
 describe('Login controller', () => {
+  const loginController = new LoginController()
   test('Should return 400 if no email is provided', async () => {
-    const loginController = new LoginController()
-
     const httpRequest = {
       body: {
         password: 'password'
@@ -18,8 +17,6 @@ describe('Login controller', () => {
   })
 
   test('Should return 400 if no password is provided', async () => {
-    const loginController = new LoginController()
-
     const httpRequest = {
       body: {
         email: 'email@rmail.com'
