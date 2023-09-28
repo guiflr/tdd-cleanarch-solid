@@ -1,3 +1,4 @@
+import type { Authentication } from '../../../domain/usecases/authentication'
 import { InvalidParamError, MissingParamError } from '../../errors'
 import { badResquest, serverError } from '../../helpers/http-helper'
 import type { EmailValidator } from '../../protocols'
@@ -10,9 +11,20 @@ describe('Login controller', () => {
     }
   }
 
+  class AuthenticationTest implements Authentication {
+    async auth(email: string, password: string): Promise<string> {
+      return 'token'
+    }
+  }
+
+  const authentication = new AuthenticationTest()
+
   const emailValidatorTest = new EmailValidatorTest()
 
-  const loginController = new LoginController(emailValidatorTest)
+  const loginController = new LoginController(
+    emailValidatorTest,
+    authentication
+  )
   test('Should return 400 if no email is provided', async () => {
     const httpRequest = {
       body: {
@@ -84,5 +96,23 @@ describe('Login controller', () => {
     const response = await loginController.handle(httpRequest)
 
     expect(response).toEqual(serverError(new Error()))
+  })
+
+  test('Should call Authentication', async () => {
+    const httpRequest = {
+      body: {
+        email: 'email@email.com',
+        password: 'password'
+      }
+    }
+
+    const spyAuthentication = jest.spyOn(authentication, 'auth')
+
+    await loginController.handle(httpRequest)
+
+    expect(spyAuthentication).toHaveBeenCalledWith(
+      httpRequest.body.email,
+      httpRequest.body.password
+    )
   })
 })
