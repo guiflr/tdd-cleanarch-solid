@@ -5,8 +5,8 @@
   "main": "index.js",
   "scripts": {
     "start": "sucrase-node src/main/server.ts",
-    "test": "jest --passWithNoTests --onlyChanged --runInBand",
-    "test:unit": "npm test -- --watch -c jest-config-unit.js",
+    "test": "jest --passWithNoTests --runInBand",
+    "test:unit": "npm test -- --watch --onlyChanged -c jest-config-unit.js",
     "test:integration": "npm test -- -c jest-config-integration.js",
     "test:verbose": "jest --passWithNoTests --runInBand",
     "test:ci": "npm test -- --coverage",
