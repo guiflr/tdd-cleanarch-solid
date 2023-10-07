@@ -18,7 +18,7 @@ export const makeSignUpController = (): Controller => {
 
   class ValidatorTest implements Validator {
     validate(input: any): Error {
-      return new Error('Method not implemented.')
+      return null as any
     }
   }
 

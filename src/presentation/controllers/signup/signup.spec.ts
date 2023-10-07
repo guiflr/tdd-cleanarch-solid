@@ -4,6 +4,7 @@ import {
   type AddAccountModel
 } from '../../../domain/usecases/add-account'
 import { InvalidParamError, MissingParamError, ServerError } from '../../errors'
+import { badResquest } from '../../helpers/http-helper'
 import type { Validator } from '../../helpers/validations/validator'
 import { type EmailValidator } from '../../protocols/email-validator'
 import { SignUpController } from './signup'
@@ -50,7 +51,7 @@ const makeEmailValidatorWithError = (): EmailValidator => {
 const makeValidator = (): Validator => {
   class ValidatorStub implements Validator {
     validate(input: any): Error {
-      return new Error()
+      return null as any
     }
   }
 
@@ -69,7 +70,11 @@ const makeSut = (): SutTypes => {
   const addAccountStub = makeAddAccount()
   const emailValidatorWithErrorStub = makeEmailValidatorWithError()
   const validator = makeValidator()
-  const sut = new SignUpController(emailValidatorStub, addAccountStub, validator)
+  const sut = new SignUpController(
+    emailValidatorStub,
+    addAccountStub,
+    validator
+  )
   const sutError = new SignUpController(
     emailValidatorWithErrorStub,
     addAccountStub,
@@ -319,5 +324,26 @@ describe('SignUp Controller', () => {
     await sut.handle(httpRequest)
 
     expect(spyValidator).toHaveBeenCalledWith(httpRequest.body)
+  })
+
+  test('Should return 400 if Validation returns an error', async () => {
+    const { sut, validator } = makeSut()
+
+    const httpRequest = {
+      body: {
+        name: 'any_name',
+        email: 'valid@mail.com',
+        password: 'any_password',
+        passwordConfirmation: 'any_password'
+      }
+    }
+
+    jest
+      .spyOn(validator, 'validate')
+      .mockReturnValueOnce(new MissingParamError('any_field'))
+
+    const httpResponse = await sut.handle(httpRequest)
+
+    expect(httpResponse).toEqual(badResquest(new MissingParamError('any_field')))
   })
 })
