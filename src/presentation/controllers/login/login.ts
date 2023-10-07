@@ -2,6 +2,7 @@ import type { Authentication } from '../../../domain/usecases/authentication'
 import { InvalidParamError, MissingParamError } from '../../errors'
 import {
   badResquest,
+  ok,
   serverError,
   unauthorized
 } from '../../helpers/http-helper'
@@ -45,7 +46,7 @@ export class LoginController implements Controller {
         return unauthorized()
       }
 
-      return { body: 'ok', statusCode: 200 }
+      return ok({ accessToken: token })
     } catch (err) {
       const error = err as Error
       return serverError(error)

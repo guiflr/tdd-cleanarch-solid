@@ -2,6 +2,7 @@ import type { Authentication } from '../../../domain/usecases/authentication'
 import { InvalidParamError, MissingParamError } from '../../errors'
 import {
   badResquest,
+  ok,
   serverError,
   unauthorized
 } from '../../helpers/http-helper'
@@ -151,5 +152,18 @@ describe('Login controller', () => {
     const response = await loginController.handle(httpRequest)
 
     expect(response).toEqual(serverError(new Error()))
+  })
+
+  test('Should call Authentication', async () => {
+    const httpRequest = {
+      body: {
+        email: 'email@email.com',
+        password: 'password'
+      }
+    }
+
+    const login = await loginController.handle(httpRequest)
+
+    expect(login).toEqual(ok({ accessToken: 'token' }))
   })
 })
