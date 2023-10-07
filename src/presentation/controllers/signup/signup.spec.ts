@@ -4,6 +4,7 @@ import {
   type AddAccountModel
 } from '../../../domain/usecases/add-account'
 import { InvalidParamError, MissingParamError, ServerError } from '../../errors'
+import type { Validator } from '../../helpers/validations/validator'
 import { type EmailValidator } from '../../protocols/email-validator'
 import { SignUpController } from './signup'
 
@@ -45,26 +46,41 @@ const makeEmailValidatorWithError = (): EmailValidator => {
 
   return new EmailValidatorStub()
 }
+
+const makeValidator = (): Validator => {
+  class ValidatorStub implements Validator {
+    validate(input: any): Error {
+      return new Error()
+    }
+  }
+
+  return new ValidatorStub()
+}
+
 interface SutTypes {
   sut: SignUpController
   sutError: SignUpController
   emailValidatorStub: EmailValidator
+  validator: Validator
   addAccountStub: AddAccount
 }
 const makeSut = (): SutTypes => {
   const emailValidatorStub = makeEmailValidator()
   const addAccountStub = makeAddAccount()
   const emailValidatorWithErrorStub = makeEmailValidatorWithError()
-  const sut = new SignUpController(emailValidatorStub, addAccountStub)
+  const validator = makeValidator()
+  const sut = new SignUpController(emailValidatorStub, addAccountStub, validator)
   const sutError = new SignUpController(
     emailValidatorWithErrorStub,
-    addAccountStub
+    addAccountStub,
+    validator
   )
 
   return {
     addAccountStub,
     emailValidatorStub,
     sut,
+    validator,
     sutError
   }
 }
@@ -284,5 +300,24 @@ describe('SignUp Controller', () => {
       email: 'valid@mail.com',
       password: 'any_password'
     })
+  })
+
+  test('Should Call Validator with correct values', async () => {
+    const { sut, validator } = makeSut()
+
+    const httpRequest = {
+      body: {
+        name: 'any_name',
+        email: 'valid@mail.com',
+        password: 'any_password',
+        passwordConfirmation: 'any_password'
+      }
+    }
+
+    const spyValidator = jest.spyOn(validator, 'validate')
+
+    await sut.handle(httpRequest)
+
+    expect(spyValidator).toHaveBeenCalledWith(httpRequest.body)
   })
 })
