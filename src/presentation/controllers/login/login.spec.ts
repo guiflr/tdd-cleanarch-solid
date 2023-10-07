@@ -1,6 +1,10 @@
 import type { Authentication } from '../../../domain/usecases/authentication'
 import { InvalidParamError, MissingParamError } from '../../errors'
-import { badResquest, serverError } from '../../helpers/http-helper'
+import {
+  badResquest,
+  serverError,
+  unauthorized
+} from '../../helpers/http-helper'
 import type { EmailValidator } from '../../protocols'
 import { LoginController } from './login'
 
@@ -114,5 +118,22 @@ describe('Login controller', () => {
       httpRequest.body.email,
       httpRequest.body.password
     )
+  })
+
+  test('Should return 401 if invalid credentials are provided', async () => {
+    const httpRequest = {
+      body: {
+        email: 'email@email.com',
+        password: 'password'
+      }
+    }
+
+    jest
+      .spyOn(authentication, 'auth')
+      .mockImplementationOnce(async () => null as any)
+
+    const repsonse = await loginController.handle(httpRequest)
+
+    expect(repsonse).toEqual(unauthorized())
   })
 })

@@ -4,6 +4,5 @@ export class ServerError extends Error {
     this.name = 'ServerError'
 
     this.stack = stack
-    this.cause = 'skdsjdlskdskdlk'
   }
 }
