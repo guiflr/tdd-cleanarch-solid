@@ -136,4 +136,20 @@ describe('Login controller', () => {
 
     expect(repsonse).toEqual(unauthorized())
   })
+
+  test('Should return 500 if Authencation throws', async () => {
+    const httpRequest = {
+      body: {
+        email: 'email@rmail.com',
+        password: 'password'
+      }
+    }
+    jest.spyOn(authentication, 'auth').mockImplementationOnce(async () => {
+      throw new Error()
+    })
+
+    const response = await loginController.handle(httpRequest)
+
+    expect(response).toEqual(serverError(new Error()))
+  })
 })
